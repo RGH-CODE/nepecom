@@ -42,7 +42,7 @@ export default function ProductCard({ product }) {
       <Card className="overflow-hidden h-full flex flex-col group">
         <div className="aspect-[4/5] overflow-hidden bg-secondary relative">
           <img
-            src={product.image}
+            src={product.images?.[0]?.image || 'https://via.placeholder.com/400x500?text=No+Image'}
             alt={product.title}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             loading="lazy"
