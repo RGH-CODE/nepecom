@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-// import { registerUser } from "../api/auth"; // Assuming registerUser exists or needs to be created
+import { Link, useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query"
+import { signUp, loginUser } from "../api/auth";
 import { Card, CardHeader, CardContent, CardTitle, CardDescription, CardFooter } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -9,9 +10,43 @@ export default function SignUp() {
   // Placeholder state/logic since original file was empty
   const [form, setForm] = useState({ username: "", email: "", password: "" });
 
+
+  const navigate = useNavigate();
+
+  const loginMutation = useMutation({
+    mutationFn: loginUser,
+    onSuccess: (data) => {
+      localStorage.setItem("access", data.access);
+      localStorage.setItem("username", form.username);
+      localStorage.setItem("refresh", data.refresh);
+      navigate("/profile");
+    }
+  });
+
+  const signUpMutation = useMutation({
+    mutationFn: signUp,
+    onSuccess: () => {
+      loginMutation.mutate({
+        username: form.username,
+        password: form.password,
+      });
+    },
+    onError: (error) => {
+      console.log(error);
+
+      alert(
+        error?.response?.data?.message || "user already exists or failed signup"
+      )
+    }
+  })
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  }
+
   const handleSubmit = (e) => {
-    e.preventDefault();
-    alert("Sign up functionality implementation pending API.");
+    e.preventDefault()
+    signUpMutation.mutate(form)
+
   };
 
   return (
@@ -27,34 +62,44 @@ export default function SignUp() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Input
+                name="username"
                 placeholder="Username"
                 value={form.username}
-                onChange={(e) => setForm({ ...form, username: e.target.value })}
+                onChange={handleChange}
                 required
               />
             </div>
             <div className="space-y-2">
               <Input
+                name="email"
                 type="email"
                 placeholder="name@example.com"
                 value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                onChange={handleChange}
                 required
               />
             </div>
             <div className="space-y-2">
               <Input
+                name="password"
                 type="password"
                 placeholder="Password"
                 value={form.password}
-                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                onChange={handleChange}
                 required
               />
             </div>
 
-            <Button className="w-full" type="submit">
-              Sign Up
+            <Button className="w-full" type="submit" disabled={signUpMutation.isPending}>
+              {signUpMutation.isPending ? "Signing up..." : "Sign Up"}
             </Button>
+            {signUpMutation.isSuccess && (
+              <p className="text-sm text-green-600 text-center">Sign Up successful!</p>
+            )}
+            {signUpMutation.isError && (
+              <p className="text-sm text-destructive text-center">User already exists or failed Signing Up</p>
+            )}
+
           </form>
         </CardContent>
         <CardFooter className="flex flex-col gap-2">

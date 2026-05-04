@@ -32,6 +32,7 @@ export default function CollectionFilter({ onSelect, selectedId }) {
             onClick={() => onSelect(collection.id)}
           >
             {collection.title}
+
           </Button>
         ))}
       </div>

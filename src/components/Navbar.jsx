@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+import { IsAuthenticated } from "../utils/authentication";
 
 export default function Navbar() {
   const isLoggedIn = !!localStorage.getItem("access");
@@ -55,6 +56,17 @@ export default function Navbar() {
                 <span className="sr-only">Cart</span>
               </Link>
             </Button>
+            {IsAuthenticated() && (
+              <Button variant="ghost" size="icon" asChild className="relative hover:bg-primary/10 transition-colors">
+
+                <Link to="/orders">
+
+                  <Package className="h-5 w-5" />
+                  <span className="sr-only">Orders</span>
+                </Link>
+
+              </Button>
+            )}
 
             {isLoggedIn ? (
               <Button variant="ghost" size="sm" asChild className="gap-2 rounded-full hover:bg-primary/10">
@@ -105,6 +117,7 @@ export default function Navbar() {
               <nav className="flex flex-col gap-1">
                 <MobileNavLink to="/" onClick={() => setIsMobileMenuOpen(false)}>Home</MobileNavLink>
                 <MobileNavLink to="/collections" onClick={() => setIsMobileMenuOpen(false)}>Collections</MobileNavLink>
+                <MobileNavLink to="/orders" onClick={() => setIsMobileMenuOpen(false)}>Orders</MobileNavLink>
               </nav>
               {!isLoggedIn && (
                 <div className="grid grid-cols-2 gap-3 pt-2">

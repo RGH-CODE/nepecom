@@ -47,11 +47,11 @@ export default function ProductCard({ product }) {
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             loading="lazy"
           />
-          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
             <Button
               onClick={handleAddToCart}
               disabled={isLoading}
-              className="translate-y-4 group-hover:translate-y-0 transition-transform"
+              className="button bg-primary text-primary-foreground hover:bg-orange-400"
               size="lg"
             >
               {isLoading ? "Adding..." : "Add to Cart"}
@@ -63,7 +63,7 @@ export default function ProductCard({ product }) {
             {product.title}
           </CardTitle>
           <CardDescription className="line-clamp-2 text-xs">
-            {product.description || "No description available"}
+            {product.description || { truncatewords: 30 } || "No description available"}
           </CardDescription>
         </CardHeader>
         <CardContent className="p-4 pt-0 mt-auto">

@@ -1,7 +1,7 @@
 import api from "./axios";
 //SINGUP
-export const signUp=async(data)=>{
-  const res =await api.post("/auth/users/",data);
+export const signUp = async (data) => {
+  const res = await api.post("/auth/users/", data);
   return res.data;
 }
 
@@ -16,4 +16,5 @@ export const fetchProfile = async () => {
   const res = await api.get("/auth/users/me/");
   return res.data;
 };
+
 
