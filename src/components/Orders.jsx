@@ -64,24 +64,62 @@ export default function OrdersPage() {
     });
 
     return (
-        <div className="p-6 space-y-6">
-            <h1 className="text-2xl font-bold">Orders</h1>
+        <div className="p-10 space-y-20">
+            <h1 className="text-2xl font-bold Justify-center mx-160">Orders</h1>
 
             {/* ORDERS LIST */}
             {isLoading ? (
-                <p>Loading...</p>
+                <p className="text-green-300">Loading Orders.....</p>
             ) : (
-                <ul className="space-y-2">
+               <ul className="max-w-3xl mx-auto space-y-10">
+
+ {/* ORDER DETAILS */}
+            {orderDetails && (
+  <div className="space-y-4">
+    <h2 className="text-xl font-semibold">
+      Order #{orderDetails.id}
+    </h2>
+
+    {orderDetails.items.map((item) => (
+      <div
+        key={item.id}
+        className="flex items-center gap-10 border p-4 rounded"
+      >
+        {/* IMAGE */}
+        <img
+          src={item.product.image}
+          alt={item.product.title}
+          className="w-16 h-16 object-cover rounded"
+        />
+
+        {/* DETAILS */}
+        <div className="flex-1">
+          <p className="font-medium">{item.product.title}</p>
+          <p>Price: Rs. {item.unit_price}</p>
+          <p>Quantity: {item.quantity}</p>
+        </div>
+<p>Total cost: Rs {item.unit_price*item.quantity}</p>
+      </div>
+      
+
+    ))}
+    
+  </div>
+)}
+
                     {orders.map((order) => (
                         <li key={order.id} className="border p-3 flex justify-between">
-                            <span>Order #{order.id}</span>
+                            <span>Order {order.id}</span>
+                           
+                            <div className="flex gap-80">
+                              <button
+                                className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-green-900 transition"
+                                onClick={() => setSelectedOrderId(order.id)}
+                              >
+                                View
+                              </button>
 
-                            <div className="flex gap-2">
-                                <button onClick={() => setSelectedOrderId(order.id)}>
-                                    View
-                                </button>
-
-                                <button onClick={() => deleteMutation.mutate(order.id)}>
+                                <button className="px-3 py-1 bg-red-400 text-white rounded hover:bg-red-900 transition" onClick={() => deleteMutation.mutate(order.id)}>
                                     Delete
                                 </button>
                             </div>
@@ -90,12 +128,7 @@ export default function OrdersPage() {
                 </ul>
             )}
 
-            {/* ORDER DETAILS */}
-            {orderDetails && (
-                <pre className="bg-gray-100 p-4">
-                    {JSON.stringify(orderDetails, null, 2)}
-                </pre>
-            )}
+           
         </div>
     );
 }
