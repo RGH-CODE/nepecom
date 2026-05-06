@@ -1,134 +1,150 @@
-import React from 'react';
+import React from "react";
 import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation,useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-    createOrder,
-    fetchOrders,
-    fetchOrderById,
-    deleteOrder,
+  createOrder,
+  fetchOrders,
+  fetchOrderById,
+  deleteOrder,
 } from "../api/orders";
+import { IsAuthenticated } from "../utils/authentication";
+
 
 export default function OrdersPage() {
-    const location = useLocation();
-    const queryClient = useQueryClient();
+  const location = useLocation();
+  const navigate =useNavigate()
+  const queryClient = useQueryClient();
 
-    const cartIdFromCart = location.state?.cartId; // ✅ get cartId
-    const [selectedOrderId, setSelectedOrderId] = React.useState(null);
-
-    // =========================
-    // FETCH ALL ORDERS
-    // =========================
-    const { data: orders = [], isLoading } = useQuery({
-        queryKey: ["orders"],
-        queryFn: fetchOrders,
-    });
-
-    // =========================
-    // FETCH SINGLE ORDER
-    // =========================
-    const { data: orderDetails } = useQuery({
-        queryKey: ["order", selectedOrderId],
-        queryFn: () => fetchOrderById(selectedOrderId),
-        enabled: !!selectedOrderId,
-    });
-
-    // =========================
-    // CREATE ORDER
-    // =========================
-    const createMutation = useMutation({
-        mutationFn: createOrder,
-        onSuccess: () => {
-            queryClient.invalidateQueries(["orders"]);
-        },
-    });
-
-    // =========================
-    // AUTO CREATE WHEN ARRIVED FROM CART
-    // =========================
-    useEffect(() => {
-        if (cartIdFromCart) {
-            createMutation.mutate({ cart_id: cartIdFromCart });
-        }
-    }, [cartIdFromCart]);
-
-    // =========================
-    // DELETE ORDER
-    // =========================
-    const deleteMutation = useMutation({
-        mutationFn: deleteOrder,
-        onSuccess: () => {
-            queryClient.invalidateQueries(["orders"]);
-            setSelectedOrderId(null);
-        },
-    });
-
-    return (
-        <div className="p-10 space-y-20">
-            <h1 className="text-2xl font-bold Justify-center mx-160">Orders</h1>
-
-            {/* ORDERS LIST */}
-            {isLoading ? (
-                <p className="text-green-300">Loading Orders.....</p>
-            ) : (
-               <ul className="max-w-3xl mx-auto space-y-10">
-
- {/* ORDER DETAILS */}
-            {orderDetails && (
-  <div className="space-y-4">
-    <h2 className="text-xl font-semibold">
-      Order #{orderDetails.id}
-    </h2>
-
-    {orderDetails.items.map((item) => (
-      <div
-        key={item.id}
-        className="flex items-center gap-10 border p-4 rounded"
-      >
-        {/* IMAGE */}
-        <img
-          src={item.product.image}
-          alt={item.product.title}
-          className="w-16 h-16 object-cover rounded"
-        />
-
-        {/* DETAILS */}
-        <div className="flex-1">
-          <p className="font-medium">{item.product.title}</p>
-          <p>Price: Rs. {item.unit_price}</p>
-          <p>Quantity: {item.quantity}</p>
-        </div>
-<p>Total cost: Rs {item.unit_price*item.quantity}</p>
-      </div>
-      
-
-    ))}
+  const cartIdFromCart = location.state?.cartId;
+  const [selectedOrderId, setSelectedOrderId] = React.useState(null);
+   if (!IsAuthenticated()) {
     
-  </div>
-)}
+  return (
 
-                    {orders.map((order) => (
-                        <li key={order.id} className="border p-3 flex justify-between">
-                            <span>Order {order.id}</span>
-                           
-                            <div className="flex gap-80">
-                              <button
-                                className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-green-900 transition"
-                                onClick={() => setSelectedOrderId(order.id)}
-                              >
-                                View
-                              </button>
+    <div className="flex items-center justify-center h-screen">
+      <button onClick={()=>navigate("/login")} className="bg-red-500 text-white px-4 py-2 rounded">
+        Please login to view orders
+      </button>
+    </div>
+  );
+}
+  const { data: orders = [], isLoading } = useQuery({
+    queryKey: ["orders"],
+    queryFn: fetchOrders,
+    
+  });
 
-                                <button className="px-3 py-1 bg-red-400 text-white rounded hover:bg-red-900 transition" onClick={() => deleteMutation.mutate(order.id)}>
-                                    Delete
-                                </button>
-                            </div>
-                        </li>
-                    ))}
-                </ul>
-            )}
+  const { data: orderDetails } = useQuery({
+    queryKey: ["order", selectedOrderId],
+    queryFn: () => fetchOrderById(selectedOrderId),
+    enabled: !!selectedOrderId,
+  });
 
-           
+  const createMutation = useMutation({
+    mutationFn: createOrder,
+    onSuccess: () => {
+      queryClient.invalidateQueries(["orders"]);
+    },
+  });
+
+  useEffect(() => {
+    if (cartIdFromCart) {
+      createMutation.mutate({ cart_id: cartIdFromCart });
+    }
+  }, [cartIdFromCart]);
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteOrder,
+    onSuccess: () => {
+      queryClient.invalidateQueries(["orders"]);
+      setSelectedOrderId(null);
+    },
+  });
+ 
+  return (
+    <div className="p-4 sm:p-6 lg:p-10 space-y-10 max-w-5xl mx-auto">
+      <h1 className="text-xl sm:text-2xl font-bold text-center">
+        Orders
+      </h1>
+
+      {isLoading ? (
+         
+        <p className="text-center text-gray-500">Loading Orders...</p>
+        
+      ) : (
+        <div className="space-y-10">
+          {/* ORDER DETAILS */}
+          {orderDetails && (
+            
+            <div className="space-y-4 border rounded-lg p-4 sm:p-6">
+    
+              <h2 className="text-lg sm:text-xl font-semibold">
+                Order #{orderDetails.id}
+              </h2>
+
+              <div className="space-y-4">
+                {orderDetails.items.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex flex-col sm:flex-row sm:items-center gap-4 border p-3 rounded"
+                  >
+                    <img
+                      src={item.product.image}
+                      alt={item.product.title}
+                      className="w-20 h-20 object-cover rounded"
+                    />
+
+                    <div className="flex-1">
+                      <p className="font-medium text-sm sm:text-base">
+                        {item.product.title}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        Price: Rs. {item.unit_price}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        Quantity: {item.quantity}
+                      </p>
+                    </div>
+
+                    <p className="font-semibold text-sm sm:text-base">
+                      Total: Rs {item.unit_price * item.quantity}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ORDERS LIST */}
+          <ul className="space-y-4">
+            {orders.map((order) => (
+              <li
+                key={order.id}
+                className="border rounded p-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+              >
+                <span className="font-medium">Order {order.id}</span>
+
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
+                  <button
+                    className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-700 transition w-full sm:w-auto"
+                    onClick={() => setSelectedOrderId(order.id)}
+                  >
+                    View
+                  </button>
+
+                  <button
+                    className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-700 transition w-full sm:w-auto"
+                    onClick={() => deleteMutation.mutate(order.id)}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
         </div>
-    );
+      )}
+    </div>
+  );
 }

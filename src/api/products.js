@@ -1,16 +1,13 @@
 // api/products.js
-import api from './axios'
+import api from './axios';
 
 export const fetchProducts = async (collectionId = null) => {
-  if (!collectionId) {
-    const res = await api.get('store/products/')
+  const url = collectionId
+    ? `store/products/?collection_id=${collectionId}`
+    : 'store/products/';
 
-    // handle paginated or direct array
-    return res.data.results || res.data
-  }
+  const res = await api.get(url);
 
-  const res = await api.get(`store/collections/${collectionId}/`)
-
-
-  return res.data.products || res.data.products || []
-}
+  // handle paginated or direct response
+  return res.data.results || res.data;
+};
