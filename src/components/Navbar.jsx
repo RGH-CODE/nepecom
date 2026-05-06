@@ -10,6 +10,15 @@ export default function Navbar() {
   const isLoggedIn = !!localStorage.getItem("access");
   const username = localStorage.getItem("username") || "User";
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
+
+  <button
+  className="p-2 md:hidden"
+  onClick={() => setShowSearch(true)}
+>
+  <Search className="h-5 w-5" />
+</button>
+
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60">
@@ -41,14 +50,14 @@ export default function Navbar() {
 
           {/* Right: Search & Actions */}
           <div className="flex items-center gap-2 flex-shrink-0">
-            <div className="hidden lg:flex relative items-center w-64 transition-all focus-within:w-80 mr-2">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search..."
-                className="w-full pl-9 h-9 bg-muted/50 border-transparent focus:bg-background focus:border-input transition-colors rounded-full"
-              />
-            </div>
+           <div className="hidden md:flex relative items-center w-56 lg:w-64">
+  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+  <Input
+    type="search"
+    placeholder="Search..."
+    className="w-full pl-9 h-9 bg-muted/50 rounded-full"
+  />
+</div>
 
             <Button variant="ghost" size="icon" asChild className="relative hover:bg-primary/10 transition-colors">
               <Link to="/carts">
@@ -107,13 +116,20 @@ export default function Navbar() {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="md:hidden border-b bg-background overflow-hidden"
+            className="border-b bg-background overflow-hidden"
           >
-            <div className="p-4 space-y-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input type="search" placeholder="Search products..." className="w-full pl-9 bg-muted/50 rounded-full" />
-              </div>
+            <div className="p-5 space-y-4">
+           <div className="flex items-center gap-2">
+        <Input
+          autoFocus
+          type="search"
+          placeholder="Search products..."
+          className="flex-1 h-10 rounded-full"
+        />
+        <button onClick={() => setShowSearch(false)}>
+          
+        </button>
+      </div>
               <nav className="flex flex-col gap-1">
                 <MobileNavLink to="/" onClick={() => setIsMobileMenuOpen(false)}>Home</MobileNavLink>
                 <MobileNavLink to="/collections" onClick={() => setIsMobileMenuOpen(false)}>Collections</MobileNavLink>
