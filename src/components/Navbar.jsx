@@ -1,16 +1,35 @@
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 import { ShoppingCart, User, Search, Menu, X, Package } from "lucide-react";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { IsAuthenticated } from "../utils/authentication";
 
 export default function Navbar() {
+  const navigate = useNavigate();
   const isLoggedIn = !!localStorage.getItem("access");
   const username = localStorage.getItem("username") || "User";
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
+
+  const [search,setSearch]=useState("");
+  const [debouncedSearch,setDebouncedSearch]=useState("");
+
+
+  useEffect(()=>{
+    const timer=setTimeout(()=>{
+      setDebouncedSearch(search);
+    },400);
+
+    return ()=>clearTimeout(timer);
+  },[search]);
+
+const handleSearch = (e) => {
+  if (e.key === "Enter") {
+    navigate(`/search?q=${search}`);
+  }
+};
 
   <button
   className="p-2 md:hidden"
@@ -55,6 +74,9 @@ export default function Navbar() {
   <Input
     type="search"
     placeholder="Search..."
+    value={search}
+    onChange={(e)=>setSearch(e.target.value)}
+    onKeyDown={handleSearch}
     className="w-full pl-9 h-9 bg-muted/50 rounded-full"
   />
 </div>
@@ -124,6 +146,9 @@ export default function Navbar() {
           autoFocus
           type="search"
           placeholder="Search products..."
+           value={search}
+          onChange={(e)=>setSearch(e.target.value)}
+          onKeyDown={handleSearch}
           className="flex-1 h-10 rounded-full"
         />
         <button onClick={() => setShowSearch(false)}>

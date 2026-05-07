@@ -7,6 +7,7 @@ import OrdersPage from "./components/Orders";
 import Collections from "./pages/collections"
 import { CartCards } from "./components/CartCards";
 import SignUp from "./pages/Signup"
+import SearchPage from "./pages/SearchPage";
 export default function App() {
   return (
     <>
@@ -20,6 +21,7 @@ export default function App() {
         <Route path="/collections" element={<Collections />} />
         <Route path="/carts" element={<CartCards />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/search" element={<SearchPage />} />
       </Routes>
     </>
   );
