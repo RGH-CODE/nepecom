@@ -8,6 +8,7 @@ import Collections from "./pages/collections"
 import { CartCards } from "./components/CartCards";
 import SignUp from "./pages/Signup"
 import SearchPage from "./pages/SearchPage";
+import ActivatePage from "./pages/ActivatePage";
 export default function App() {
   return (
     <>
@@ -15,6 +16,9 @@ export default function App() {
 
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/activate/:uid/:token"
+        element={<ActivatePage/>}
+        />
         <Route path="/login" element={<Login />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/orders" element={<OrdersPage />} />

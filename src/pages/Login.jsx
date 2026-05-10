@@ -8,13 +8,13 @@ import { Input } from "../components/ui/input";
 import { Loader2 } from "lucide-react";
 
 export default function Login() {
-  const [form, setForm] = useState({ username: "", password: "" });
+  const [form, setForm] = useState({ email: "", password: "" });
 
   const mutation = useMutation({
     mutationFn: loginUser,
     onSuccess: (data) => {
       localStorage.setItem("access", data.access);
-      localStorage.setItem("username", form.username); // Storing username for Navbar
+      localStorage.setItem("email", form.email); // Storing username for Navbar
       localStorage.setItem("refresh", data.refresh);
       window.location.href = "/profile";
     },
@@ -22,7 +22,10 @@ export default function Login() {
 
   const submit = (e) => {
     e.preventDefault();
-    mutation.mutate(form);
+   mutation.mutate({
+  email: form.email,
+  password: form.password,
+});
   };
 
   return (
@@ -37,12 +40,13 @@ export default function Login() {
         <CardContent>
           <form onSubmit={submit} className="space-y-4">
             <div className="space-y-2">
-              <Input
-                placeholder="Username"
-                value={form.username}
-                onChange={(e) => setForm({ ...form, username: e.target.value })}
-                required
-              />
+             <Input
+  type="email"
+  placeholder="Email"
+  value={form.email}
+  onChange={(e) => setForm({ ...form, email: e.target.value })}
+  required
+/>
             </div>
             <div className="space-y-2">
               <Input

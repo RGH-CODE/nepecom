@@ -8,7 +8,7 @@ import { Input } from "../components/ui/input";
 
 export default function SignUp() {
   // Placeholder state/logic since original file was empty
-  const [form, setForm] = useState({ username: "", email: "", password: "" });
+  const [form, setForm] = useState({ username: "", email: "", password: ""});
 
 
   const navigate = useNavigate();
@@ -17,7 +17,7 @@ export default function SignUp() {
     mutationFn: loginUser,
     onSuccess: (data) => {
       localStorage.setItem("access", data.access);
-      localStorage.setItem("username", form.username);
+      localStorage.setItem("email", form.email);
       localStorage.setItem("refresh", data.refresh);
       navigate("/profile");
     }
@@ -27,12 +27,12 @@ export default function SignUp() {
     mutationFn: signUp,
     onSuccess: () => {
       loginMutation.mutate({
-        username: form.username,
+        email: form.email,
         password: form.password,
       });
     },
     onError: (error) => {
-      console.log(error);
+       console.log(error.response.data);
 
       alert(
         error?.response?.data?.message || "user already exists or failed signup"
@@ -45,8 +45,11 @@ export default function SignUp() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    signUpMutation.mutate(form)
-
+    signUpMutation.mutate({
+  username: form.username || form.email.split("@")[0],
+  email: form.email,
+  password: form.password
+});
   };
 
   return (
@@ -66,7 +69,7 @@ export default function SignUp() {
                 placeholder="Username"
                 value={form.username}
                 onChange={handleChange}
-                required
+               
               />
             </div>
             <div className="space-y-2">
@@ -88,13 +91,15 @@ export default function SignUp() {
                 onChange={handleChange}
                 required
               />
+        
             </div>
 
             <Button className="w-full" type="submit" disabled={signUpMutation.isPending}>
               {signUpMutation.isPending ? "Signing up..." : "Sign Up"}
             </Button>
             {signUpMutation.isSuccess && (
-              <p className="text-sm text-green-600 text-center">Sign Up successful!</p>
+              <p className="text-sm text-green-600 text-center">Sign Up successful! please check you email for activation of your account</p>
+              
             )}
             {signUpMutation.isError && (
               <p className="text-sm text-destructive text-center">User already exists or failed Signing Up</p>

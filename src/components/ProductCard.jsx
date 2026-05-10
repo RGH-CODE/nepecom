@@ -23,7 +23,7 @@ export default function ProductCard({ product }) {
     mutationFn: addToCart,
   });
 
-  const handleAddToCart = () => {
+  const  handleAddToCart = () => {
     if (cartId) {
       addItem({
         cartId,
