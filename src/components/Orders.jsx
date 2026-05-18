@@ -75,8 +75,9 @@ export default function OrdersPage() {
       ) : (
         <div className="space-y-10">
           {/* ORDER DETAILS */}
-          {orderDetails && (
-            
+          {orders.length === 0 ? (
+  <p className="mx-90 text-red-400">You have not made any orders</p>
+) : (
             <div className="space-y-4 border rounded-lg p-4 sm:p-6">
     
               <h2 className="text-lg sm:text-xl font-semibold">

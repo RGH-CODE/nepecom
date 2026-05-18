@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import { signUp } from "../api/auth";
-
+import { signUp, loginUser } from "../api/auth";
+import GoogleSignIn from "../components/GoogleSignIn";
 import {
   Card,
   CardHeader,
@@ -16,21 +16,40 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 
 export default function SignUp() {
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
     username: "",
     email: "",
     password: "",
   });
 
+  // auto login after signup
+  const loginMutation = useMutation({
+    mutationFn: loginUser,
+
+    onSuccess: (data) => {
+      localStorage.setItem("access", data.access);
+      localStorage.setItem("refresh", data.refresh);
+      localStorage.setItem("email", form.email);
+
+      navigate("/profile");
+    },
+
+    onError: () => {
+      alert("Login failed after signup");
+    },
+  });
+
   const signUpMutation = useMutation({
     mutationFn: signUp,
 
     onSuccess: () => {
-      // save temporarily for auto login after activation
-      localStorage.setItem("pending_email", form.email);
-      localStorage.setItem("pending_password", form.password);
-
-      alert("Signup successful! Please check your email to activate your account.");
+      // auto login immediately
+      loginMutation.mutate({
+        email: form.email,
+        password: form.password,
+      });
     },
 
     onError: (error) => {
@@ -76,56 +95,45 @@ export default function SignUp() {
 
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Input
-                name="username"
-                placeholder="Username"
-                value={form.username}
-                onChange={handleChange}
-              />
-            </div>
+            <Input
+              name="username"
+              placeholder="Username"
+              value={form.username}
+              onChange={handleChange}
+            />
 
-            <div className="space-y-2">
-              <Input
-                name="email"
-                type="email"
-                placeholder="name@example.com"
-                value={form.email}
-                onChange={handleChange}
-                required
-              />
-            </div>
+            <Input
+              name="email"
+              type="email"
+              placeholder="name@example.com"
+              value={form.email}
+              onChange={handleChange}
+              required
+            />
 
-            <div className="space-y-2">
-              <Input
-                name="password"
-                type="password"
-                placeholder="Password"
-                value={form.password}
-                onChange={handleChange}
-                required
-              />
-            </div>
+            <Input
+              name="password"
+              type="password"
+              placeholder="Password"
+              value={form.password}
+              onChange={handleChange}
+              required
+            />
 
             <Button
               className="w-full"
               type="submit"
-              disabled={signUpMutation.isPending}
+              disabled={
+                signUpMutation.isPending || loginMutation.isPending
+              }
             >
-              {signUpMutation.isPending ? "Signing up..." : "Sign Up"}
+              {signUpMutation.isPending || loginMutation.isPending
+                ? "Creating account..."
+                : "Sign Up"}
             </Button>
-
-            {signUpMutation.isSuccess && (
-              <p className="text-sm text-green-600 text-center">
-                Signup successful! Please check your email to activate your account.
-              </p>
-            )}
-
-            {signUpMutation.isError && (
-              <p className="text-sm text-destructive text-center">
-                Signup failed.
-              </p>
-            )}
+            <div className="flex justify-center">
+  <GoogleSignIn />
+</div>
           </form>
         </CardContent>
 

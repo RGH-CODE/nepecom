@@ -6,7 +6,7 @@ import { Card, CardHeader, CardContent, CardTitle, CardDescription, CardFooter }
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Loader2 } from "lucide-react";
-
+import GoogleSignIn from "../components/GoogleSignIn"
 export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
 
@@ -68,7 +68,9 @@ export default function Login() {
                 "Login"
               )}
             </Button>
-
+           <div className="flex justify-center">
+  <GoogleSignIn />
+</div>
             {mutation.isSuccess && (
               <p className="text-sm text-green-600 text-center">Login successful!</p>
             )}
