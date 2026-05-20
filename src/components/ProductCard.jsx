@@ -23,17 +23,25 @@ export default function ProductCard({ product }) {
     mutationFn: addToCart,
   });
 
-  const  handleAddToCart = () => {
-    if (cartId) {
-      addItem({
-        cartId,
-        product_id: product.id,
-        quantity: 1,
-      });
-    } else {
-      createCartMutation.mutate();
-    }
-  };
+  const handleAddToCart = () => {
+
+  // ALWAYS GET LATEST CART ID
+  const currentCartId = getCartId();
+
+  if (currentCartId) {
+
+    addItem({
+      cartId: currentCartId,
+      product_id: product.id,
+      quantity: 1,
+    });
+
+  } else {
+
+    createCartMutation.mutate();
+
+  }
+};
 
   const isLoading = isPending || createCartMutation.isPending;
 
