@@ -10,7 +10,7 @@ import {
 
 import {
   fetchAddress,
-} from "../api/Address";
+} from "../api/address";
 
 import { IsAuthenticated } from "../utils/authentication";
 
