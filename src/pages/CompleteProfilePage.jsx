@@ -10,7 +10,7 @@ import {
 import {
   fetchAddress,
   updateAddress,
-} from "../api/Address";
+} from "../api/address";
 
 export default function CompleteProfilePage() {
   const navigate = useNavigate();
