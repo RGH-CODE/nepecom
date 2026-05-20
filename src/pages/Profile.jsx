@@ -39,7 +39,12 @@ export default function Profile() {
           </div>
           <CardTitle className="text-2xl">Welcome, {data.username}!</CardTitle>
           <CardDescription>Manage your account settings</CardDescription>
-          <Button className="mx-38" onClick={()=>navigate("/complete-profile")} >Edit Personal Info</Button>
+        <Button
+  onClick={() => navigate("/complete-profile")}
+  className="w-full sm:w-auto px-4 py-2 text-sm sm:text-base"
+>
+  Edit Personal Info
+</Button>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center gap-3 p-3 border rounded-md">
