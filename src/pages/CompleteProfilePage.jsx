@@ -56,7 +56,7 @@ export default function CompleteProfilePage() {
   // -----------------------------
   useEffect(() => {
     if (profile || customer || address) {
-      setFormData({
+       setFormData({
         first_name: profile?.first_name || "",
         last_name: profile?.last_name || "",
         phone: customer?.phone || "",
