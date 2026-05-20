@@ -9,6 +9,8 @@ import { CartCards } from "./components/CartCards";
 import SignUp from "./pages/Signup"
 import SearchPage from "./pages/SearchPage";
 import ActivatePage from "./pages/ActivatePage";
+import CheckoutPage from "./pages/CheckoutPage"
+import CompleteProfilePage from "./pages/CompleteProfilePage"
 export default function App() {
   return (
     <>
@@ -26,6 +28,8 @@ export default function App() {
         <Route path="/carts" element={<CartCards />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/search" element={<SearchPage />} />
+        <Route path="/checkout/" element={<CheckoutPage/>}/>
+        <Route path="/complete-profile" element={<CompleteProfilePage/>}/>
       </Routes>
     </>
   );

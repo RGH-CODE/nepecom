@@ -3,10 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { fetchcarts } from "../api/carts";
 import { createOrder } from "../api/orders";
 import { IsAuthenticated } from "../utils/authentication";
+import api from "../api/axios"
 
 export const CartItems = ({ cartId }) => {
   const navigate = useNavigate();
-
+ 
   const {
     data: items = [],
     isLoading,
@@ -97,18 +98,50 @@ export const CartItems = ({ cartId }) => {
       <button
         type="button"
         disabled={createMutation.isPending}
-        onClick={() => {
+        onClick={async () => {
           if (!IsAuthenticated()) {
             navigate("/login");
             return;
           }
+          try{
+            const customerRes=await api.get("store/customers/me/");
+            let address=null;
+            
+            try{
+              const addressRes=await api.get("store/address/me/");
+              address=addressRes.data;
+            }catch{
+              address=null;
+            }
+            const customer=customerRes.data;
 
-          // ✅ THIS IS THE MAIN FIX
-          createMutation.mutate({ cart_id: cartId });
+            const isProfileComplete=
+            customer.phone &&
+            address &&
+            address.street &&
+            address.city &&
+            address.province;
+            
+            if(!isProfileComplete){
+              navigate("/complete-profile",{
+                state:{cartId},
+              });
+              return;
+            }
+            navigate("/checkout",{
+              state:{cartId},
+            });
+          }catch(err){
+            console.log(err);
+            <p>something went wrong!!</p>
+          }
+
+         
+          // createMutation.mutate({ cart_id: cartId });
         }}
         className="bg-black text-white px-4 py-2 rounded hover:bg-green-300"
       >
-        {createMutation.isPending ? "Ordering..." : "Order Now"}
+        {isLoading ? "Ordering..." : "Order Now"}
       </button>
     </div>
   );

@@ -3,8 +3,10 @@ import { fetchProfile } from "../api/auth";
 import { Card, CardHeader, CardContent, CardTitle, CardDescription, CardFooter } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { User, LogOut, Mail } from "lucide-react";
+import {useNavigate} from "react-router-dom";
 
 export default function Profile() {
+  const navigate=useNavigate()
   const { data, isLoading, isError } = useQuery({
     queryKey: ["profile"],
     queryFn: fetchProfile,
@@ -37,6 +39,7 @@ export default function Profile() {
           </div>
           <CardTitle className="text-2xl">Welcome, {data.username}!</CardTitle>
           <CardDescription>Manage your account settings</CardDescription>
+          <Button className="mx-38" onClick={()=>navigate("/complete-profile")} >Edit Personal Info</Button>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center gap-3 p-3 border rounded-md">

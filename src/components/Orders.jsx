@@ -143,7 +143,7 @@ export default function OrdersPage() {
                 className="border rounded p-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
               >
                 <span className="font-medium">
-                  Order {order.id}
+                  Orders
                 </span>
 
                 <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
