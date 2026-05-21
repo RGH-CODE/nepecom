@@ -1,10 +1,11 @@
 import ProductGrid from '../components/ProductGrid'
 import { Button } from '../components/ui/button'
+import {useNavigate} from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 export default function Home() {
-
+const navigate=useNavigate();
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
@@ -18,18 +19,22 @@ export default function Home() {
               transition={{ duration: 0.5 }}
             >
               <div className="space-y-4">
-                <h1 className="text-4xl font-extrabold tracking-tighter sm:text-5xl xl:text-6xl/none bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">
-                  Elevate Your Style
-                </h1>
+               <h1 className="text-4xl font-extrabold tracking-tighter sm:text-5xl xl:text-6xl/none bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60 transition-all duration-300 hover:opacity-80 hover:scale-105">
+  Elevate Your Style
+</h1>
                 <p className="max-w-[600px] text-muted-foreground md:text-xl">
                   Discover the latest trends in fashion and accessories. Shop our curated collection for the season.
                 </p>
               </div>
               <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                <Button size="lg" className="px-8">
+                <Button size="lg" className="px-8"
+                onClick={()=>navigate("/carts")}
+                >
                   Shop Now <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
-                <Button variant="outline" size="lg">
+                <Button variant="outline" size="lg" 
+                onClick={()=>navigate("/collections")}
+                >
                   View Collections
                 </Button>
               </div>

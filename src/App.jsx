@@ -11,6 +11,10 @@ import SearchPage from "./pages/SearchPage";
 import ActivatePage from "./pages/ActivatePage";
 import CheckoutPage from "./pages/CheckoutPage"
 import CompleteProfilePage from "./pages/CompleteProfilePage"
+import ProductDetails from "./components/ProductDetails"
+import DealsPage from "./pages/DealsPage"
+import WishListPage from "./pages/WishListPage"
+import NewArrivalsPage from "./pages/NewArrivalsPage"
 export default function App() {
   return (
     <>
@@ -30,6 +34,10 @@ export default function App() {
         <Route path="/search" element={<SearchPage />} />
         <Route path="/checkout/" element={<CheckoutPage/>}/>
         <Route path="/complete-profile" element={<CompleteProfilePage/>}/>
+        <Route path="/products/:id" element={<ProductDetails/>}/>
+        <Route path="/deals" element={<DealsPage/>}/>
+        <Route path="/new-arrivals" element={<NewArrivalsPage/>}/>
+        <Route path="/wishlist" element={<WishListPage/>}/>
       </Routes>
     </>
   );

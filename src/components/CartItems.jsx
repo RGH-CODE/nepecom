@@ -16,6 +16,7 @@ export const CartItems = ({ cartId }) => {
     queryKey: ["cart-items", cartId],
     queryFn: () => fetchcarts(cartId),
     enabled: !!cartId,
+    staleTime: 1000 * 10, 
   });
 
   // ✅ CREATE ORDER MUTATION

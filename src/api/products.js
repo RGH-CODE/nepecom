@@ -16,9 +16,14 @@ export const fetchProducts = async (
 
   const url = `store/products/?${params.toString()}`;
 
-  console.log(url); // debug
+  
 
   const res = await api.get(url);
 
   return res.data.results || res.data;
 };
+
+export const fetchProductById=async(id)=>{
+  const res =await api.get(`store/products/${id}`)
+  return res.data
+}
