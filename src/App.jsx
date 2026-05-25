@@ -15,6 +15,7 @@ import ProductDetails from "./components/ProductDetails"
 import DealsPage from "./pages/DealsPage"
 import WishListPage from "./pages/WishListPage"
 import NewArrivalsPage from "./pages/NewArrivalsPage"
+import MembershipPage from "./pages/Membership"
 export default function App() {
   return (
     <>
@@ -38,6 +39,7 @@ export default function App() {
         <Route path="/deals" element={<DealsPage/>}/>
         <Route path="/new-arrivals" element={<NewArrivalsPage/>}/>
         <Route path="/wishlist" element={<WishListPage/>}/>
+        <Route path="/membership" element={<MembershipPage/>}/>
       </Routes>
     </>
   );

@@ -1,14 +1,18 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useState } from "react";
-
+import { IsAuthenticated } from "../utils/authentication";
+import api from "../api/axios"
 import { fetchProductById } from "../api/products";
 import { createcarts, addToCart } from "../api/carts";
 import { getCartId, setCartId } from "../utils/cartStorage";
+import { Button } from "./ui/button";
 
 export default function ProductDetailsPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+   const [added, setAdded] = useState(false);
+   const [buyNowLoading, setBuyNowLoading] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const {
@@ -35,13 +39,14 @@ export default function ProductDetailsPage() {
   const { mutate: addItem, isPending } = useMutation({
     mutationFn: addToCart,
     onSuccess: () => {
-      // Optional: Show success message
-      alert("Product added to cart!");
+   setAdded(true);
+    
       
     },
   });
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (e) => {
+    e.stopPropagation()
     const currentCartId = getCartId();
 
     if (currentCartId) {
@@ -55,13 +60,89 @@ export default function ProductDetailsPage() {
     }
   };
 
-  const handleBuyNow = async() => {
-    await handleAddToCart();
-    navigate("/");
-    
-  };
+  const handleBuyNow = async () => {
 
-  if (isLoading) {
+  // LOGIN CHECK
+  if (!IsAuthenticated()) {
+    navigate("/login");
+    return;
+  }
+
+  try {
+
+    setBuyNowLoading(true);
+
+    // CUSTOMER
+    const customerRes = await api.get(
+      "store/customers/me/"
+    );
+
+    const customer = customerRes.data;
+
+    // ADDRESS
+    let address = null;
+
+    try {
+
+      const addressRes = await api.get(
+        "store/address/me/"
+      );
+
+      address = addressRes.data;
+
+    } catch {
+
+      address = null;
+    }
+
+    // PROFILE CHECK
+    const isProfileComplete =
+      customer.phone &&
+      address &&
+      address.street &&
+      address.city &&
+      address.province;
+
+    // INCOMPLETE PROFILE
+    if (!isProfileComplete) {
+
+      navigate("/complete-profile", {
+        state: {
+          buyNow: {
+            product_id: product.id,
+            quantity: quantity,
+            product: product,
+          },
+        },
+      });
+
+      return;
+    }
+
+    // DIRECT CHECKOUT
+    navigate("/checkout", {
+      state: {
+        buyNow: {
+          product_id: product.id,
+          quantity: quantity,
+          product: product,
+        },
+      },
+    });
+
+  } catch (err) {
+
+    console.log(err);
+
+    alert("Something went wrong");
+
+  } finally {
+
+    setBuyNowLoading(false);
+  }
+};
+
+if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center space-y-4">
@@ -230,14 +311,18 @@ export default function ProductDetailsPage() {
                     "🛒 Add To Cart"
                   )}
                 </button>
-                <button
-                 type="button"
-                  onClick={handleBuyNow}
-                  disabled={isPending || !inStock}
-                  className="flex-1 px-8 py-4 rounded-xl font-bold text-lg bg-green-500 hover:bg-green-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
-                >
-                Buy Now
-                </button>
+<button
+  type="button"
+  onClick={handleBuyNow}
+  disabled={buyNowLoading || !inStock}
+  className="flex-1 px-8 py-4 rounded-xl font-bold text-lg bg-green-500 hover:bg-green-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
+>
+  {buyNowLoading
+    ? "Buying..."
+    : !inStock
+    ? "Out of Stock"
+    : "Buy Now"}
+</button>
               </div>
 
               {/* Description */}

@@ -2,7 +2,9 @@ import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { createcarts, addToCart } from "../api/carts";
+import api from "../api/axios"
 import { getCartId, setCartId } from "../utils/cartStorage";
+import { IsAuthenticated } from "../utils/authentication";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "./ui/card";
 import { Button } from "./ui/button";
 
@@ -31,7 +33,7 @@ export default function ProductCard({ product }) {
     },
   });
 
-  const handleAddToCart = (e) => {
+   const handleAddToCart = (e) => {
     e.stopPropagation();
     const currentCartId = getCartId();
 
@@ -46,11 +48,80 @@ export default function ProductCard({ product }) {
     }
   };
 
-  const handleBuyNow = (e) => {
-    e.stopPropagation();
-    handleAddToCart(e);
-    setTimeout(() => navigate("/carts"), 500);
-  };
+  const handleBuyNow = async () => {
+
+ 
+  // LOGIN CHECK
+  if (!IsAuthenticated()) {
+    navigate("/login");
+    return;
+  }
+
+  try {
+
+    // CUSTOMER
+    const customerRes = await api.get(
+      "store/customers/me/"
+    );
+
+    const customer = customerRes.data;
+
+    // ADDRESS
+    let address = null;
+
+    try {
+
+      const addressRes = await api.get(
+        "store/address/me/"
+      );
+
+      address = addressRes.data;
+
+    } catch {
+
+      address = null;
+    }
+
+    // PROFILE CHECK
+    const isProfileComplete =
+      customer.phone &&
+      address &&
+      address.street &&
+      address.city &&
+      address.province;
+
+    // INCOMPLETE
+    if (!isProfileComplete) {
+
+      navigate("/complete-profile", {
+        state: {
+          buyNow: true,
+          productId: product.id,
+          quantity: 1,
+        },
+      });
+
+      return;
+    }
+
+    // COMPLETE
+navigate("/checkout", {
+  state: {
+    buyNow: {
+      product_id: product.id,
+      quantity: 1,
+      product: product,
+    },
+  },
+});
+
+  } catch (err) {
+
+    console.log(err);
+
+    alert("Something went wrong");
+  }
+};
 
   const isLoading = isAddingToCart || createCartMutation.isPending;
   const inStock = product.inventory > 0;
@@ -196,14 +267,27 @@ export default function ProductCard({ product }) {
 >
   {isLoading ? "..." : added ? "+" : "Add to Cart"}
 </Button>
-             <Button
-          onClick={handleBuyNow}
-          disabled={isLoading || !inStock}
-          className="h-6 md:h-8 px-2 md:px-3 text-[10px] md:text-xs lg:text-sm bg-green-400 hover:bg-green-900 "
-              size="sm"
-          >
-      Buy Now
-          </Button>
+            <Button
+            type="button"
+  onClick={handleBuyNow}
+  disabled={isLoading || !inStock}
+  size="sm"
+  className="
+    h-7 md:h-9
+    px-2 md:px-4
+    text-[10px] md:text-xs lg:text-sm
+    bg-green-500
+    hover:bg-green-700
+    text-white
+    whitespace-nowrap
+  "
+>
+  {isLoading
+    ? "Buying...."
+    : !inStock
+    ? "Out of Stock"
+    : "Buy Now"}
+</Button>
           </div>
         </div>
       </CardFooter>
@@ -217,3 +301,12 @@ export default function ProductCard({ product }) {
     </Card>
   );
 }
+
+
+
+
+
+
+
+
+

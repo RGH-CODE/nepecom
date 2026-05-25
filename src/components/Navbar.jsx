@@ -228,6 +228,7 @@ export default function Navbar() {
                             to="/wishlist"
                             icon={<Heart className="h-4 w-4" />}
                             onClick={() => setShowUserMenu(false)}
+                            
                           >
                             Wishlist
                           </UserMenuItem>
