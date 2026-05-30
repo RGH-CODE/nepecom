@@ -12,6 +12,7 @@ export default function CheckoutPage() {
   const { state } = useLocation();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [paymentMethod,setPaymentMethod]=useState("COD")
   
   // Get data from state - can be either cartId or buyNow data
   const cartId = state?.cartId;
@@ -72,6 +73,40 @@ export default function CheckoutPage() {
     queryFn: fetchAddress,
   });
 
+
+  //esewa submitfrom
+const submitEsewaForm = (
+  paymentUrl,
+  payload
+) => {
+
+  const form = document.createElement("form");
+
+  form.method = "POST";
+
+  form.action = paymentUrl;
+
+  Object.entries(payload).forEach(
+    ([key, value]) => {
+
+      const input =
+        document.createElement("input");
+
+      input.type = "hidden";
+
+      input.name = key;
+
+      input.value = value;
+
+      form.appendChild(input);
+    }
+  );
+
+  document.body.appendChild(form);
+
+  form.submit();
+};
+
   // -----------------------------
   // PROFILE VALIDATION
   // -----------------------------
@@ -113,9 +148,21 @@ export default function CheckoutPage() {
   const orderMutation = useMutation({
     mutationFn: createOrder,
 
-    onSuccess: () => {
-      navigate("/orders");
-    },
+    onSuccess: (data) => {
+
+  if (data.payment_method === "ESEWA") {
+
+    submitEsewaForm(
+      data.payment_url,
+      data.payload
+    );
+
+  } else {
+
+    navigate("/orders");
+
+  }
+},
 
     onError: (err) => {
       console.log(err);
@@ -138,10 +185,12 @@ export default function CheckoutPage() {
           // Buy Now: send product_id and quantity
           product_id: buyNowData.product_id,
           quantity: buyNowData.quantity,
+          payment_method:paymentMethod
         }
       : {
           // Cart: send cart_id
           cart_id: cartId,
+          payment_method:paymentMethod
         };
 
     orderMutation.mutate(orderPayload);
@@ -335,6 +384,30 @@ export default function CheckoutPage() {
 
       {/* ACTIONS */}
       <div className="space-y-3">
+<div className="space-y-3 space-x-4 ">
+<label>
+  <input 
+  type="radio"
+  value="COD"
+  checked={paymentMethod==="COD"}
+  onChange={(e)=>
+    setPaymentMethod(e.target.value)
+  }
+  />
+  Cash on Delivery
+</label>
+<label>
+  <input
+  type="radio"
+  value="S"
+  checked={paymentMethod==="S"}
+  onChange={(e)=>
+    setPaymentMethod(e.target.value)
+  }
+  />
+  Pay with esewa
+</label>
+</div>
         <button
           onClick={handleConfirmOrder}
           disabled={orderMutation.isPending}
