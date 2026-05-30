@@ -21,8 +21,10 @@ export default function Home() {
             className="space-y-8"
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white shadow-sm border border-black/5">
+                    
               <Crown className="w-4 h-4 text-amber-500" />
-              <span className="text-xs font-bold uppercase tracking-widest">Early Access: Summer Membership Open</span>
+                 
+                <span className="text-xs font-bold uppercase tracking-widest">Early Access: Summer Membership Open</span>
             </div>
             
             <h1 className="text-6xl md:text-8xl font-medium tracking-tighter leading-[0.85] font-sans">
@@ -152,6 +154,7 @@ export default function Home() {
 
       {/* --- MEMBERSHIP CARD (REALISTIC UI) --- */}
       <section className="container mx-auto px-4 pb-24">
+       
         <div className="bg-[#1a1a1a] rounded-[40px] p-8 md:p-20 text-white relative overflow-hidden">
           <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-stone-800/50 to-transparent" />
           

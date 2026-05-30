@@ -124,7 +124,10 @@ last_name:formData.last_name,
 
       // REDIRECT BACK TO CHECKOUT
       navigate("/checkout", {
-        state: { cartId },
+        state:{
+          cartId,
+          buyNow: state?.buyNow,
+        }
       });
 
     } catch (err) {
