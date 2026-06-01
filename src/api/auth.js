@@ -18,7 +18,7 @@ export const fetchProfile = async () => {
 };
 
 export const updateProfile =async(data)=>{
-  const res =await api.put("/auth/users/me",data)
+  const res =await api.put("/auth/users/me/",data)
   return res.data;
 }
 
